@@ -7,7 +7,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db.init_app(app)
 
 
-from models import GenericModel, Problem, User
+from models import GenericModel, Problem
 
 
 def add_rules(local_app, base_url, problem_list: list[str], base_api_name: str, model: type['GenericModel'], param_name: str):
