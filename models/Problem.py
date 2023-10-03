@@ -1,23 +1,17 @@
-"""
-Defines the SQLAlchemy ORM representation for a Problem.
-A problem is identified by its unique id, and has a name, a description and a difficulty.
-"""
 from app import db
+from models import GenericModel
 
 
-class Problem(db.Model):
+class Problem(db.Model, GenericModel):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
     description = db.Column(db.String(), nullable=False)
     difficulty = db.Column(db.Integer, nullable=False)
 
+    def __init__(self, name, description, difficulty):
+        self.name = name
+        self.description = description
+        self.difficulty = difficulty
+
     def __repr__(self):
         return '<Problem %r>' % self.name
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'description': self.description,
-            'difficulty': self.difficulty,
-        }

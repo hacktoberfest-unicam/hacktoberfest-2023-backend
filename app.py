@@ -7,15 +7,22 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db.init_app(app)
 
 
-def add_rules(local_app):
-    from view import HelloAPI, ProblemAPI
-    local_app.add_url_rule('/', view_func=HelloAPI.as_view('hello'), methods=['GET'])
-    local_app.add_url_rule('/problem/<int:problem_id>', view_func=ProblemAPI.as_view('problem_api'),
+from models import GenericModel, Problem
+
+
+def add_rules(local_app, base_url, problem_list: list[str], base_api_name: str, model: type['GenericModel'], param_name: str):
+    local_app.add_url_rule(f'/{base_url}/<int:crud_id>',
+                           view_func=GenericCRUD.as_view(base_api_name, model, problem_list, param_name),
                            methods=['GET', 'PUT', 'DELETE'])
-    local_app.add_url_rule('/problem', view_func=ProblemAPI.as_view('problem_api_update'), methods=['POST', 'PUT'])
+    local_app.add_url_rule(f'/{base_url}',
+                           view_func=GenericCRUD.as_view(f'{base_api_name}_part_2', model, problem_list, param_name),
+                           methods=['GET', 'POST'])
 
-
-add_rules(app)
 
 with app.app_context():
     db.create_all()
+
+from view import HelloAPI, GenericCRUD
+
+app.add_url_rule('/', view_func=HelloAPI.as_view('hello'), methods=['GET'])
+add_rules(app, 'problem', ['name', 'description', 'difficulty'], 'problem_api', Problem, 'name')

@@ -1,2 +1,2 @@
+from .GenericCRUD import GenericCRUD
 from .hello import HelloAPI
-from .problem import ProblemAPI
