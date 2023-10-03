@@ -7,7 +7,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db.init_app(app)
 
 
-from models import GenericModel, Problem
+from models import GenericModel, Problem, User
 
 
 def add_rules(local_app, base_url, problem_list: list[str], base_api_name: str, model: type['GenericModel'], param_name: str):
@@ -26,3 +26,4 @@ from view import HelloAPI, GenericCRUD
 
 app.add_url_rule('/', view_func=HelloAPI.as_view('hello'), methods=['GET'])
 add_rules(app, 'problem', ['name', 'description', 'difficulty'], 'problem_api', Problem, 'name')
+add_rules(app, 'user', ['github_username', 'github_profile_picture', 'github_url'], 'user_api', User, 'github_username')
