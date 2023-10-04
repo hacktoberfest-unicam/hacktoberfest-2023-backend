@@ -1,9 +1,8 @@
 from flask import request
 from flask.views import MethodView
 
-from controller import GenericController
-
 from app import db
+from controller import GenericController
 
 
 class GenericCRUD(MethodView):
@@ -18,12 +17,17 @@ class GenericCRUD(MethodView):
         self.__param_name = param_name
 
     def get(self, crud_id: int = None):
+        result = None
         if crud_id is None:
             result = self.__controller.get_all()
-        else:
+        elif crud_id is not None:
             result = self.__controller.get_by_id(crud_id)
-        if result is None and self.__param_name in request.args:
+        elif self.__param_name is list and len(self.__param_name) > 0 and all(param in request.args for param in self.__param_name):
+            result = self.__controller.get_by_params(self.__param_name, [request.args[param] for param in self.__param_name])
+        elif self.__param_name in request.args:
             result = self.__controller.get_by_param(self.__param_name, request.args[self.__param_name])
+        if result is None:
+            return {"error": "Not found"}, 404
         return result
 
     def post(self):
