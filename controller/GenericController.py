@@ -47,3 +47,11 @@ class GenericController(object):
             return False
         db.session.delete(model)
         return True
+
+    def get_by_params(self, param_name_list, param_value_list):
+        query_result = db.session.query(self.__model).filter_by(**{param_name: param_value for param_name, param_value in zip(param_name_list, param_value_list)}).all()
+        if len(query_result) == 0:
+            return None
+        if len(query_result) == 1:
+            return query_result[0].to_dict()
+        return [model.to_dict() for model in query_result]
